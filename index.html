@@ -2,15 +2,23 @@
 <html>
 <head>
 	<title>Mindmap</title>
-<script type="text/javascript" src="knockout-2.1.0.js"></script>	
+
+	<script type="text/javascript" src="knockout-2.1.0.js"></script>	
+
+	<link rel="stylesheet" href="mindmap.css"/>
+	<meta charset="utf-8"/>
 </head>
 <body>
 
 <script type="text/html" id="node">
 <li>
-	<span data-bind="text: content"></span>
-	<a href="#" data-bind="click: addNode">+</a>
-	<a href="#" data-bind="click: deleteNode">-</a>
+	<div class="content">
+		<div class="menu">
+			<a href="#" data-bind="click: addNode">+</a>
+			<a href="#" data-bind="click: deleteNode">-</a>
+		</div>
+		<div data-bind="text: content"></div>
+	</div>
 	<!-- ko if: children().length > 0 -->
 	<ul data-bind="template: { name: 'node', foreach: children }">
 	</ul>
@@ -30,6 +38,13 @@
 function Node(content, parent) {
 	var self = this;
 	self.content = ko.observable(content);
+	self.top = ko.computed(function() {
+
+		return parent ? parent.top() + 100 : 0;
+	}, self);  
+	self.left = ko.computed(function() {
+		return parent ? parent.left() + parent.children().length * 100 : 0;
+	}, self);
 	self.children = ko.observableArray();
 	self.addNode = function() {
 		self.children.push(new Node('New Node ' + new Date(), self) );
@@ -42,9 +57,10 @@ function Node(content, parent) {
 
 var app = {
 	root: new Node('Root')
-}
+};
 
 ko.applyBindings(app);
+
 </script>
 </body>
 </html>
