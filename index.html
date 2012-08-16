@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+	<title>Mindmap</title>
+<script type="text/javascript" src="knockout-2.1.0.js"></script>	
+</head>
+<body>
+
+<script type="text/html" id="node">
+<li>
+	<span data-bind="text: content"></span>
+	<a href="#" data-bind="click: addNode">+</a>
+	<a href="#" data-bind="click: deleteNode">-</a>
+	<!-- ko if: children().length > 0 -->
+	<ul data-bind="template: { name: 'node', foreach: children }">
+	</ul>
+	<!-- /ko -->
+</li>
+</script>
+
+
+<div id="canvas">
+
+<ul id="root" data-bind="template: { name: 'node', data: root }">
+
+</ul>
+</div>
+
+<script type="text/javascript">
+function Node(content, parent) {
+	var self = this;
+	self.content = ko.observable(content);
+	self.children = ko.observableArray();
+	self.addNode = function() {
+		self.children.push(new Node('New Node ' + new Date(), self) );
+	}
+
+	self.deleteNode = function() {
+		parent.children.remove(self);
+	}
+}
+
+var app = {
+	root: new Node('Root')
+}
+
+ko.applyBindings(app);
+</script>
+</body>
+</html>
